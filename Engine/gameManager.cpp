@@ -24,7 +24,15 @@ gameMan::gameMan(int nBombs)
 		lookAt(spawnPos).spawnBomb();
 	}
 
+	//for (int i = 0; i < 120l; i++)
+	//{
+	//	const Vei2 pos = { xRange(rng), yRange(rng) };
+	//	
+	//	if (lookAt(pos).isRevealed())
+	//		return;
 
+	//	lookAt(pos).reveal();
+	//}
 }
 
 gameMan::tile & gameMan::lookAt(const Vei2 & pos)
@@ -91,4 +99,19 @@ void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords) const
 		assert(0 > 1);
 		break;
 	}
+}
+
+void gameMan::tile::reveal()
+{
+	assert(status == state::hidden);
+
+	if (status == state::flagged)
+		return;
+
+	status = state::revealed;
+}
+
+bool gameMan::tile::isRevealed() const
+{
+	return status == state::revealed;
 }

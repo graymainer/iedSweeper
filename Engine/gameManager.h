@@ -12,6 +12,9 @@ public:
 
 	RectI makeBG() const;
 private:
+
+
+
 	class tile {
 	public:
 		enum class state {
@@ -22,10 +25,16 @@ private:
 		void spawnBomb();
 		bool hasBomb() const;
 		void drawTile(Graphics& gfx, const Vei2& pixelCoords) const;
+		void reveal();
+		bool isRevealed() const;
 	private:
 		state status = state::hidden;
 		bool bBomb = false;
 	};
+
+
+
+
 
 private:
 	tile& lookAt(const Vei2 & pos);
