@@ -11,7 +11,8 @@ public:
 	void draw(Graphics& gfx) const;
 
 	RectI makeBG() const;
-	void onClick( const Vei2& pixelCoords);
+	void onLeftClick( const Vei2& clickCoords);
+	void onRightClick(const Vei2& clickCoords);
 
 private:
 
@@ -29,6 +30,8 @@ private:
 		void drawTile(Graphics& gfx, const Vei2& pixelCoords) const;
 		void reveal();
 		bool isRevealed() const;
+		bool isFlagged() const;
+		void flag();
 	private:
 		state status = state::hidden;
 		bool bBomb = false;

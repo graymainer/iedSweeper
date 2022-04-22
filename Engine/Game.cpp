@@ -39,8 +39,38 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (wnd.mouse.LeftIsPressed())
-		iedField.onClick(wnd.mouse.GetPos());
+	//if (wnd.mouse.LeftIsPressed())
+	//{
+	//	
+	//}
+	//else if (wnd.mouse.RightIsPressed())
+	//{
+	//	const Vei2 mouseCoords = wnd.mouse.GetPos();
+
+	//	if (iedField.makeBG().contains(mouseCoords))
+	//		iedField.onRightClick(mouseCoords);
+	//}
+		
+
+	while (!wnd.mouse.IsEmpty())
+	{
+		const Mouse::Event e = wnd.mouse.Read();
+
+		if (e.GetType() == Mouse::Event::Type::LPress)
+		{
+			const Vei2 mouseCoords = e.GetPos();
+
+				if (iedField.makeBG().contains(mouseCoords))
+					iedField.onLeftClick(mouseCoords);
+		}
+		else if (e.GetType() == Mouse::Event::Type::RPress)
+		{
+			const Vei2 mouseCoords = e.GetPos();
+
+			if (iedField.makeBG().contains(mouseCoords))
+				iedField.onRightClick(mouseCoords);
+		}
+	}
 }
 
 void Game::ComposeFrame()

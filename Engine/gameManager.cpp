@@ -68,14 +68,26 @@ RectI gameMan::makeBG() const
 	return RectI( 0, fieldWidth * SpriteCodex::tileSize, 0, fieldHeight * SpriteCodex::tileSize);
 }
 
-void gameMan::onClick(const Vei2 & pixelCoords)
+void gameMan::onRightClick(const Vei2 & clickCoords)
 {
-	const Vei2 gridPos = screenToGrid(pixelCoords);
+	const Vei2 gridPos = screenToGrid(clickCoords);
 	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
 
 	tile& clickedTile = lookAt(gridPos);
 
 	if (!clickedTile.isRevealed())
+		clickedTile.flag();
+
+}
+
+void gameMan::onLeftClick(const Vei2 & clickCoords)
+{
+	const Vei2 gridPos = screenToGrid(clickCoords);
+	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
+
+	tile& clickedTile = lookAt(gridPos);
+
+	if (!clickedTile.isRevealed() && !clickedTile.isFlagged())
 		clickedTile.reveal();
 }
 
@@ -120,14 +132,25 @@ void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords) const
 void gameMan::tile::reveal()
 {
 	assert(status == state::hidden);
-
-	if (status == state::flagged)
-		return;
-
 	status = state::revealed;
 }
 
 bool gameMan::tile::isRevealed() const
 {
 	return status == state::revealed;
+}
+
+bool gameMan::tile::isFlagged() const
+{
+	return status == state::flagged;
+}
+
+void gameMan::tile::flag()
+{
+	assert(!isRevealed());
+
+	if (isFlagged())
+		status = state::hidden;
+	else
+		status = state::flagged;
 }
