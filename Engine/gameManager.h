@@ -11,6 +11,8 @@ public:
 	void draw(Graphics& gfx) const;
 
 	RectI makeBG() const;
+	void onClick( const Vei2& pixelCoords);
+
 private:
 
 
@@ -39,6 +41,7 @@ private:
 private:
 	tile& lookAt(const Vei2 & pos);
 	const tile& lookAt(const Vei2 & pos) const;
+	Vei2 screenToGrid(const Vei2& screenPos);
 
 private:
 

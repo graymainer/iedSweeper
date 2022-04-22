@@ -45,6 +45,11 @@ const gameMan::tile & gameMan::lookAt(const Vei2 & pos) const
 	return field[pos.y * fieldWidth + pos.x];
 }
 
+Vei2 gameMan::screenToGrid(const Vei2 & screenPos)
+{
+	return screenPos / SpriteCodex::tileSize;
+}
+
 void gameMan::draw(Graphics & gfx) const
 {
 	gfx.DrawRect(makeBG(), Color(192, 192, 192));
@@ -61,6 +66,17 @@ void gameMan::draw(Graphics & gfx) const
 RectI gameMan::makeBG() const
 {
 	return RectI( 0, fieldWidth * SpriteCodex::tileSize, 0, fieldHeight * SpriteCodex::tileSize);
+}
+
+void gameMan::onClick(const Vei2 & pixelCoords)
+{
+	const Vei2 gridPos = screenToGrid(pixelCoords);
+	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
+
+	tile& clickedTile = lookAt(gridPos);
+
+	if (!clickedTile.isRevealed())
+		clickedTile.reveal();
 }
 
 void gameMan::tile::spawnBomb()

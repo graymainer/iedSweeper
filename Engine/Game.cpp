@@ -39,6 +39,8 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	if (wnd.mouse.LeftIsPressed())
+		iedField.onClick(wnd.mouse.GetPos());
 }
 
 void Game::ComposeFrame()
