@@ -5,19 +5,10 @@
 #include "Sound.h"
 
 class gameMan {
-public:
-	gameMan( int nBombs);
-
-	void draw(Graphics& gfx) const;
-
-	RectI makeBG() const;
-	void onLeftClick( const Vei2& clickCoords);
-	void onRightClick(const Vei2& clickCoords);
 
 private:
 
-
-
+	//TILE CLASS
 	class tile {
 	public:
 		enum class state {
@@ -32,19 +23,30 @@ private:
 		bool isRevealed() const;
 		bool isFlagged() const;
 		void flag();
+		void setNearbyBombCounter(int foundBombs);
+
 	private:
 		state status = state::hidden;
 		bool bBomb = false;
+		int nNearbyBombs = -1;
 	};
+	//TILE CLASS END
 
+public:
+	gameMan(int nBombs);
 
+	void draw(Graphics& gfx) const;
 
+	RectI makeBG() const;
+	void onLeftClick(const Vei2& clickCoords);
+	void onRightClick(const Vei2& clickCoords);
 
 
 private:
 	tile& lookAt(const Vei2 & pos);
 	const tile& lookAt(const Vei2 & pos) const;
 	Vei2 screenToGrid(const Vei2& screenPos);
+	int countNearbyBombs(const Vei2 pos);
 
 private:
 

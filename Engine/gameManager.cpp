@@ -24,15 +24,13 @@ gameMan::gameMan(int nBombs)
 		lookAt(spawnPos).spawnBomb();
 	}
 
-	//for (int i = 0; i < 120l; i++)
-	//{
-	//	const Vei2 pos = { xRange(rng), yRange(rng) };
-	//	
-	//	if (lookAt(pos).isRevealed())
-	//		return;
-
-	//	lookAt(pos).reveal();
-	//}
+	for (Vei2 gridPos{ 0,0 }; gridPos.y < fieldHeight; gridPos.y++)
+	{
+		for (gridPos.x = 0; gridPos.x < fieldWidth; gridPos.x++)
+		{
+			lookAt(gridPos).setNearbyBombCounter(countNearbyBombs(gridPos));
+		}
+	}
 }
 
 gameMan::tile & gameMan::lookAt(const Vei2 & pos)
@@ -48,6 +46,29 @@ const gameMan::tile & gameMan::lookAt(const Vei2 & pos) const
 Vei2 gameMan::screenToGrid(const Vei2 & screenPos)
 {
 	return screenPos / SpriteCodex::tileSize;
+}
+
+int gameMan::countNearbyBombs(const Vei2 pos)
+{
+	const int xStart = std::max(0, pos.x - 1);
+	const int yStart = std::max(0, pos.y - 1);
+
+	const int xEnd = std::min(fieldWidth - 1, pos.x + 1);
+	const int yEnd = std::min(fieldHeight - 1, pos.y + 1);
+
+	int bombCount = 0;
+
+
+	for (Vei2 gridPos = { xStart,yStart }; gridPos.y <= yEnd; gridPos.y++)
+	{
+		for (gridPos.x = xStart; gridPos.x <= xEnd; gridPos.x++)
+		{
+			if (lookAt(gridPos).hasBomb()) //is pulling a non existant tile
+				bombCount++;
+		}
+	}
+
+	return bombCount;
 }
 
 void gameMan::draw(Graphics & gfx) const
@@ -112,7 +133,7 @@ void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords) const
 
 	case state::revealed:
 		if (!hasBomb())
-			SpriteCodex::DrawTile0(pixelCoords, gfx);
+			SpriteCodex::DrawTileNumber(pixelCoords, nNearbyBombs, gfx);
 		else
 			SpriteCodex::DrawTileBomb(pixelCoords, gfx);
 
@@ -153,4 +174,13 @@ void gameMan::tile::flag()
 		status = state::hidden;
 	else
 		status = state::flagged;
+}
+
+void gameMan::tile::setNearbyBombCounter(int foundBombs)
+{
+
+	assert(nNearbyBombs == -1);
+
+
+	nNearbyBombs = foundBombs;
 }

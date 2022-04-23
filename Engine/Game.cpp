@@ -38,19 +38,7 @@ void Game::Go()
 }
 
 void Game::UpdateModel()
-{
-	//if (wnd.mouse.LeftIsPressed())
-	//{
-	//	
-	//}
-	//else if (wnd.mouse.RightIsPressed())
-	//{
-	//	const Vei2 mouseCoords = wnd.mouse.GetPos();
-
-	//	if (iedField.makeBG().contains(mouseCoords))
-	//		iedField.onRightClick(mouseCoords);
-	//}
-		
+{		
 
 	while (!wnd.mouse.IsEmpty())
 	{
