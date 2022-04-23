@@ -79,7 +79,7 @@ void gameMan::draw(Graphics & gfx) const
 	{
 		for (gridPos.x = 0; gridPos.x < fieldWidth; gridPos.x++)
 		{
-			lookAt(gridPos).drawTile(gfx, gridPos * SpriteCodex::tileSize);
+			lookAt(gridPos).drawTile(gfx, gridPos * SpriteCodex::tileSize, bGameOver);
 		}
 	}
 }
@@ -91,6 +91,9 @@ RectI gameMan::makeBG() const
 
 void gameMan::onRightClick(const Vei2 & clickCoords)
 {
+	if (bGameOver)
+		return;
+
 	const Vei2 gridPos = screenToGrid(clickCoords);
 	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
 
@@ -103,13 +106,20 @@ void gameMan::onRightClick(const Vei2 & clickCoords)
 
 void gameMan::onLeftClick(const Vei2 & clickCoords)
 {
+	if (bGameOver)
+		return;
+
 	const Vei2 gridPos = screenToGrid(clickCoords);
 	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
 
 	tile& clickedTile = lookAt(gridPos);
 
 	if (!clickedTile.isRevealed() && !clickedTile.isFlagged())
+	{
 		clickedTile.reveal();
+		if (clickedTile.hasBomb())
+			bGameOver = true;
+	}
 }
 
 void gameMan::tile::spawnBomb()
@@ -123,8 +133,50 @@ bool gameMan::tile::hasBomb() const
 	return bBomb;
 }
 
-void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords) const
+void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords, const bool bFucked) const
 {
+	if (bFucked)
+	{
+		switch (status)
+		{
+		case state::hidden:
+			if (hasBomb())
+				SpriteCodex::DrawTileBomb(pixelCoords, gfx);
+			else
+				SpriteCodex::DrawTile0(pixelCoords, gfx);
+
+			break;
+
+		case state::revealed:
+			if (hasBomb())
+				SpriteCodex::DrawTileBombRed(pixelCoords, gfx);
+			else
+				SpriteCodex::DrawTileNumber(pixelCoords, nNearbyBombs, gfx);
+
+			break;
+
+		case state::flagged:
+			if (hasBomb())
+			{
+				SpriteCodex::DrawTileBomb(pixelCoords, gfx);
+				SpriteCodex::DrawTileFlag(pixelCoords, gfx);
+			}	
+			else
+			{
+				SpriteCodex::DrawTileButton(pixelCoords, gfx);
+				SpriteCodex::DrawTileCross(pixelCoords, gfx);
+			}
+
+			break;
+
+		default:
+			assert(0 > 1);
+			break;
+		}
+
+		return;
+	}
+
 	switch (status)
 	{
 	case state::hidden:

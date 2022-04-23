@@ -18,7 +18,7 @@ private:
 		};
 		void spawnBomb();
 		bool hasBomb() const;
-		void drawTile(Graphics& gfx, const Vei2& pixelCoords) const;
+		void drawTile(Graphics& gfx, const Vei2& pixelCoords, const bool bFucked) const;
 		void reveal();
 		bool isRevealed() const;
 		bool isFlagged() const;
@@ -52,5 +52,6 @@ private:
 
 	static constexpr int fieldWidth = 20;
 	static constexpr int fieldHeight = 16;
+	bool bGameOver = false;
 	tile field[fieldWidth * fieldHeight];
 };
