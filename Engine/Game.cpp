@@ -24,7 +24,8 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	iedField(gfx)
 {
 }
 
@@ -37,7 +38,7 @@ void Game::Go()
 }
 
 void Game::UpdateModel()
-{		
+{
 }
 
 void Game::ComposeFrame()

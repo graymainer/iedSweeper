@@ -16,11 +16,11 @@ private:
 	//TILE CLASS END
 
 public:
-	gameMan();
+	gameMan(Graphics& gfx);
 
 	void draw(Graphics& gfx) const;
 
-	RectI makeBG() const;
+	RectI makeBG(const int halfW, const int halfH) const;
 
 
 private:
@@ -32,5 +32,6 @@ private:
 
 	static constexpr int fieldWidth = 20;
 	static constexpr int fieldHeight = 16;
+	const Vei2 gridOrigin; //based on center of grid.
 	tile field[fieldWidth * fieldHeight];
 };
