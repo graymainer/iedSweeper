@@ -24,8 +24,7 @@
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd ),
-	iedField(20)
+	gfx( wnd )
 {
 }
 
@@ -39,26 +38,6 @@ void Game::Go()
 
 void Game::UpdateModel()
 {		
-
-	while (!wnd.mouse.IsEmpty())
-	{
-		const Mouse::Event e = wnd.mouse.Read();
-
-		if (e.GetType() == Mouse::Event::Type::LPress)
-		{
-			const Vei2 mouseCoords = e.GetPos();
-
-				if (iedField.makeBG().contains(mouseCoords))
-					iedField.onLeftClick(mouseCoords);
-		}
-		else if (e.GetType() == Mouse::Event::Type::RPress)
-		{
-			const Vei2 mouseCoords = e.GetPos();
-
-			if (iedField.makeBG().contains(mouseCoords))
-				iedField.onRightClick(mouseCoords);
-		}
-	}
 }
 
 void Game::ComposeFrame()

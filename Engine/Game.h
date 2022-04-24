@@ -27,9 +27,7 @@
 
 //HOMEWORK:
 //1. center the field
-//2. implement win condition with screen
 //3. OPTIONAL Draw a border
-//4. OPTIONAL add fail sound.
 
 class Game
 {
