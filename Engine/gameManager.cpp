@@ -42,5 +42,5 @@ RectI gameMan::makeBG() const
 
 void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords) const
 {
-	SpriteCodex::DrawTile0(pixelCoords, gfx);
+	SpriteCodex::DrawTileButton(pixelCoords, gfx);
 }
