@@ -2,9 +2,9 @@
 #include <assert.h>
 #include <random>
 
-gameMan::gameMan(Graphics & gfx, int nBombs)
+gameMan::gameMan(const Vei2 & in_gridPos, int nBombs)
 	:
-	gridOrigin(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2) //by default, placed at center of screen.
+	gridOrigin(in_gridPos) //by default, placed at center of screen.
 {
 	assert(nBombs > 0 && nBombs < gridWidth * gridHeight);
 

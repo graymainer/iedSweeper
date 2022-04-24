@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	gmMan(gfx, 20)
+	gmMan(Vei2( gfx.ScreenWidth / 2, gfx.ScreenHeight / 2 ), 60)
 {
 }
 

@@ -33,7 +33,7 @@ private:
 	//TILE CLASS END
 
 public:
-	gameMan(Graphics& gfx, int nBombs);
+	gameMan(const Vei2& in_gridPos, int nBombs);
 
 	void draw(Graphics& gfx) const;
 
