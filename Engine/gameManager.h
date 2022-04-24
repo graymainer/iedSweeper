@@ -33,11 +33,14 @@ private:
 
 private:
 
-	static constexpr int fieldWidth = 20;
-	static constexpr int fieldHeight = 16;
-	const Vei2 gridOrigin; //based on center of grid.
-	tile field[fieldWidth * fieldHeight];
+	static constexpr int gridWidth = 20;
+	static constexpr int gridHeight = 16;
 
+	const Vei2 gridOrigin; //based on center of grid.
+
+	tile field[gridWidth * gridHeight];
+
+	//stuff for background rendering
 	static constexpr int borderSize = 20;
 	static constexpr Color backgroundColor = Color(192, 192, 192);
 	static constexpr Color borderColor = Color(110, 103, 78);
