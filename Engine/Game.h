@@ -47,7 +47,7 @@ private:
 private:
 	MainWindow& wnd;
 	Graphics gfx;
-	gameMan iedField;
+	gameMan gmMan;
 	/********************************/
 	/*  User Variables              */
 	/********************************/

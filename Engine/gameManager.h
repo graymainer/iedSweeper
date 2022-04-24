@@ -33,11 +33,17 @@ private:
 	//TILE CLASS END
 
 public:
-	gameMan(int nBombs);
+	gameMan(Graphics& gfx, int nBombs);
 
 	void draw(Graphics& gfx) const;
 
-	RectI makeBG() const;
+	RectI makeBG(const int halfW, const int halfH) const;
+	RectI makeBorder(const int halfW, const int halfH, const int size) const;
+
+	void drawBackground(Graphics & gfx, const int halfW, const int halfH,
+		const int in_size, const Color bgClr, const Color bdrClr) const;
+
+
 	void onLeftClick(const Vei2& clickCoords);
 	void onRightClick(const Vei2& clickCoords);
 
@@ -50,23 +56,36 @@ private:
 	void stopSoundScape();
 	void startSoundScape();
 
-private:
+public:
 
+	//grid stuff
 	static constexpr int gridWidth = 20;
 	static constexpr int gridHeight = 16;
 
+private:
+
+	//some other grid stuff
+
+	const Vei2 gridOrigin; //based in the center of the grid.
+	tile field[gridWidth * gridHeight];
+
+	//background rendering stuff
+	static constexpr int borderSize = 20;
+	static constexpr Color backgroundColor = Color(192, 192, 192);
+	static constexpr Color borderColor = Color(110, 103, 78);
+
+	//game conditional stuff
 	bool bGameOver = false;
 	bool bGameWon = false;
-	tile field[gridWidth * gridHeight];
 	int nTilesToReveal = gridWidth * gridHeight;
 
 private:
-
+	//game conditional sounds
 	Sound boomSnd = { L"Sounds\\boom.wav" };
 	Sound winSnd = { L"Sounds\\win.wav" };
 	Sound beginSnd = { L"Sounds\\begin.wav" };
 
-	//the soundscape
+	//soundscape sounds
 	Sound ambMus = { L"Sounds\\amb_music.wav", Sound::LoopType::AutoFullSound };
 	Sound ambGun = { L"Sounds\\amb_gunfire.wav", Sound::LoopType::AutoFullSound };
 	Sound ambWind = { L"Sounds\\amb_wind.wav", Sound::LoopType::AutoFullSound };

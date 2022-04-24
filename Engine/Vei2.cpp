@@ -18,6 +18,12 @@ Vei2& Vei2::operator+=( const Vei2& rhs )
 	return *this = *this + rhs;
 }
 
+Vei2 Vei2::operator*(const Vei2& rhs) const
+{
+	return Vei2(x * rhs.x, y * rhs.y);
+}
+
+
 Vei2 Vei2::operator*( int rhs ) const
 {
 	return Vei2( x * rhs,y * rhs );

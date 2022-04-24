@@ -2,7 +2,9 @@
 #include <assert.h>
 #include <random>
 
-gameMan::gameMan(int nBombs)
+gameMan::gameMan(Graphics & gfx, int nBombs)
+	:
+	gridOrigin(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2) //is based on center of grid.
 {
 	assert(nBombs > 0 && nBombs < gridWidth * gridHeight);
 
@@ -53,7 +55,63 @@ const gameMan::tile & gameMan::lookAt(const Vei2 & pos) const
 
 Vei2 gameMan::screenToGrid(const Vei2 & screenPos)
 {
-	return screenPos / SpriteCodex::tileSize;
+	const Vei2 topLeft = Vei2(gridOrigin.x - ((gridWidth * SpriteCodex::tileSize) / 2), gridOrigin.y - ((gridHeight * SpriteCodex::tileSize) / 2));
+
+	return ((screenPos - topLeft) / SpriteCodex::tileSize);
+	//return (screenPos / SpriteCodex::tileSize);
+}
+
+void gameMan::onLeftClick(const Vei2 & clickCoords)
+{
+	if (bGameOver || bGameWon)
+		return;
+
+	const Vei2 gridPos = screenToGrid(clickCoords);
+
+	//so that when we go to reference the tile, we dont use an empty one, resulting in a memory access violation.
+	assert(makeBG(gridWidth / 2, gridHeight / 2).contains(clickCoords));
+
+	tile& clickedTile = lookAt(gridPos);
+
+	if (!clickedTile.isRevealed() && !clickedTile.isFlagged())
+	{
+		clickedTile.reveal();
+		if (clickedTile.hasBomb())
+
+		{
+			boomSnd.Play(1.0f, 0.15f);
+			bGameOver = true;
+			stopSoundScape();
+		}
+		else
+		{
+			nTilesToReveal--;
+
+			if (nTilesToReveal <= 0)
+			{
+				assert(nTilesToReveal >= 0); //shouldn't be a negative num
+				bGameWon = true;
+				winSnd.Play(1.0f, 0.15f);
+				stopSoundScape();
+			}
+		}
+
+	}
+}
+
+void gameMan::onRightClick(const Vei2 & clickCoords)
+{
+	if (bGameOver || bGameWon)
+		return;
+
+	const Vei2 gridPos = screenToGrid(clickCoords);
+	assert(makeBG(gridWidth / 2, gridHeight / 2).contains(clickCoords));
+
+	tile& clickedTile = lookAt(gridPos);
+
+	if (!clickedTile.isRevealed())
+		clickedTile.flag();
+
 }
 
 int gameMan::countNearbyBombs(const Vei2 pos)
@@ -95,71 +153,37 @@ void gameMan::startSoundScape()
 
 void gameMan::draw(Graphics & gfx) const
 {
-	gfx.DrawRect(makeBG(), Color(192, 192, 192));
+	const int halfWidth = (gridWidth) / 2;
+	const int halfHeight = (gridHeight) / 2;
+
+	drawBackground(gfx, halfWidth, halfHeight, borderSize, backgroundColor, borderColor);
+
+
 
 	for (Vei2 gridPos = { 0, 0 }; gridPos.y < gridHeight; gridPos.y++)
 	{
 		for (gridPos.x = 0; gridPos.x < gridWidth; gridPos.x++)
 		{
-			lookAt(gridPos).drawTile(gfx, gridPos * SpriteCodex::tileSize, bGameOver, bGameWon);
+			lookAt(gridPos).drawTile(gfx, Vei2((gridPos.x * SpriteCodex::tileSize) + (gridOrigin.x - (halfWidth * SpriteCodex::tileSize)), 
+				(gridPos.y * SpriteCodex::tileSize) + (gridOrigin.y - (halfHeight * SpriteCodex::tileSize))), bGameOver, bGameWon);
 		}
 	}
 }
 
-RectI gameMan::makeBG() const
+RectI gameMan::makeBG(const int halfW, const int halfH) const
 {
-	return RectI( 0, gridWidth * SpriteCodex::tileSize, 0, gridHeight * SpriteCodex::tileSize);
+	return RectI(gridOrigin.x - (halfW * SpriteCodex::tileSize), gridOrigin.x + (halfW * SpriteCodex::tileSize), gridOrigin.y - (halfH * SpriteCodex::tileSize), gridOrigin.y + (halfH * SpriteCodex::tileSize));
 }
 
-void gameMan::onRightClick(const Vei2 & clickCoords)
+RectI gameMan::makeBorder(const int halfW, const int halfH, const int size) const
 {
-	if (bGameOver || bGameWon)
-		return;
-
-	const Vei2 gridPos = screenToGrid(clickCoords);
-	assert((gridPos.x >= 0 && gridPos.x < gridWidth) && (gridPos.y >= 0 && gridPos.y < gridHeight));
-
-	tile& clickedTile = lookAt(gridPos);
-
-	if (!clickedTile.isRevealed())
-		clickedTile.flag();
-
+	return RectI((gridOrigin.x - (halfW * SpriteCodex::tileSize)) - size, (gridOrigin.x + (halfW * SpriteCodex::tileSize)) + size, (gridOrigin.y - (halfH * SpriteCodex::tileSize)) - size, (gridOrigin.y + (halfH * SpriteCodex::tileSize)) + size);
 }
 
-void gameMan::onLeftClick(const Vei2 & clickCoords)
+void gameMan::drawBackground(Graphics & gfx, const int halfW, const int halfH, const int in_size, const Color bgClr, const Color bdrClr) const
 {
-	if (bGameOver || bGameWon)
-		return;
-
-	const Vei2 gridPos = screenToGrid(clickCoords);
-	assert((gridPos.x >= 0 && gridPos.x < gridWidth) && (gridPos.y >= 0 && gridPos.y < gridHeight));
-
-	tile& clickedTile = lookAt(gridPos);
-
-	if (!clickedTile.isRevealed() && !clickedTile.isFlagged())
-	{
-		clickedTile.reveal();
-		if (clickedTile.hasBomb())
-			
-		{
-			boomSnd.Play(1.0f, 0.15f);
-			bGameOver = true;
-			stopSoundScape();
-		}
-		else
-		{
-			nTilesToReveal--;
-
-			if (nTilesToReveal <= 0)
-			{
-				assert(nTilesToReveal >= 0); //shouldn't be a negative num
-				bGameWon = true;
-				winSnd.Play(1.0f, 0.15f);
-				stopSoundScape();
-			}
-		}
-			
-	}
+	gfx.DrawRect(makeBorder(halfW, halfH, in_size), bdrClr);
+	gfx.DrawRect(makeBG(halfW, halfH), bgClr);
 }
 
 void gameMan::tile::spawnBomb()

@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	iedField(20)
+	gmMan(gfx, 20)
 {
 }
 
@@ -48,20 +48,20 @@ void Game::UpdateModel()
 		{
 			const Vei2 mouseCoords = e.GetPos();
 
-				if (iedField.makeBG().contains(mouseCoords))
-					iedField.onLeftClick(mouseCoords);
+				if (gmMan.makeBG(gmMan.gridWidth / 2, gmMan.gridHeight / 2).contains(mouseCoords))
+					gmMan.onLeftClick(mouseCoords);
 		}
 		else if (e.GetType() == Mouse::Event::Type::RPress)
 		{
 			const Vei2 mouseCoords = e.GetPos();
 
-			if (iedField.makeBG().contains(mouseCoords))
-				iedField.onRightClick(mouseCoords);
+			if (gmMan.makeBG(gmMan.gridWidth / 2, gmMan.gridHeight / 2).contains(mouseCoords))
+				gmMan.onRightClick(mouseCoords);
 		}
 	}
 }
 
 void Game::ComposeFrame()
 {
-	iedField.draw(gfx);
+	gmMan.draw(gfx);
 }
