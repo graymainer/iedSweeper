@@ -25,10 +25,6 @@
 #include "Graphics.h"
 #include "gameManager.h"
 
-//HOMEWORK:
-//1. center the field
-//3. OPTIONAL Draw a border
-
 class Game
 {
 public:
