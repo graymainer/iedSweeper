@@ -34,7 +34,10 @@ gameMan::gameMan(int nBombs)
 		}
 	}
 
+#if !_DEBUG //just so that when i debug while listening to music, i dont shoot myself
 	startSoundScape();
+#endif
+
 	beginSnd.Play(1.0f, 0.15f);
 }
 
