@@ -6,6 +6,8 @@ gameMan::gameMan(int nBombs)
 {
 	assert(nBombs > 0 && nBombs < fieldWidth * fieldHeight);
 
+	nTilesToReveal -= nBombs;
+
 	std::random_device rd;
 	std::mt19937 rng(rd());
 
@@ -31,6 +33,9 @@ gameMan::gameMan(int nBombs)
 			lookAt(gridPos).setNearbyBombCounter(countNearbyBombs(gridPos));
 		}
 	}
+
+	startSoundScape();
+	beginSnd.Play(1.0f, 0.15f);
 }
 
 gameMan::tile & gameMan::lookAt(const Vei2 & pos)
@@ -71,6 +76,20 @@ int gameMan::countNearbyBombs(const Vei2 pos)
 	return bombCount;
 }
 
+void gameMan::stopSoundScape()
+{
+	ambMus.StopAll();
+	ambGun.StopAll();
+	ambWind.StopAll();
+}
+
+void gameMan::startSoundScape()
+{
+	ambMus.Play(1.0f, 0.35f);
+	ambGun.Play(1.0f, 0.07f);
+	ambWind.Play(1.0f, 0.12f);
+}
+
 void gameMan::draw(Graphics & gfx) const
 {
 	gfx.DrawRect(makeBG(), Color(192, 192, 192));
@@ -79,7 +98,7 @@ void gameMan::draw(Graphics & gfx) const
 	{
 		for (gridPos.x = 0; gridPos.x < fieldWidth; gridPos.x++)
 		{
-			lookAt(gridPos).drawTile(gfx, gridPos * SpriteCodex::tileSize, bGameOver);
+			lookAt(gridPos).drawTile(gfx, gridPos * SpriteCodex::tileSize, bGameOver, bGameWon);
 		}
 	}
 }
@@ -91,7 +110,7 @@ RectI gameMan::makeBG() const
 
 void gameMan::onRightClick(const Vei2 & clickCoords)
 {
-	if (bGameOver)
+	if (bGameOver || bGameWon)
 		return;
 
 	const Vei2 gridPos = screenToGrid(clickCoords);
@@ -106,7 +125,7 @@ void gameMan::onRightClick(const Vei2 & clickCoords)
 
 void gameMan::onLeftClick(const Vei2 & clickCoords)
 {
-	if (bGameOver)
+	if (bGameOver || bGameWon)
 		return;
 
 	const Vei2 gridPos = screenToGrid(clickCoords);
@@ -118,7 +137,25 @@ void gameMan::onLeftClick(const Vei2 & clickCoords)
 	{
 		clickedTile.reveal();
 		if (clickedTile.hasBomb())
+			
+		{
+			boomSnd.Play(1.0f, 0.15f);
 			bGameOver = true;
+			stopSoundScape();
+		}
+		else
+		{
+			nTilesToReveal--;
+
+			if (nTilesToReveal <= 0)
+			{
+				assert(nTilesToReveal >= 0); //shouldn't be a negative num
+				bGameWon = true;
+				winSnd.Play(1.0f, 0.15f);
+				stopSoundScape();
+			}
+		}
+			
 	}
 }
 
@@ -133,7 +170,7 @@ bool gameMan::tile::hasBomb() const
 	return bBomb;
 }
 
-void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords, const bool bFucked) const
+void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords, const bool bFucked, const bool bWon) const
 {
 	if (bFucked)
 	{
@@ -174,6 +211,41 @@ void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords, const bool
 			break;
 		}
 
+		return;
+	}
+	else if (bWon)
+	{
+		switch (status)
+		{
+		case state::hidden:
+			if (hasBomb())
+				SpriteCodex::DrawTileBomb(pixelCoords, gfx);
+			else
+				SpriteCodex::DrawTile0(pixelCoords, gfx);
+			break;
+
+		case state::revealed:
+			SpriteCodex::DrawTileNumber(pixelCoords, nNearbyBombs, gfx);
+			break;
+
+		case state::flagged:
+			if (hasBomb())
+			{
+				SpriteCodex::DrawTileBomb(pixelCoords, gfx);
+				SpriteCodex::DrawTileFlag(pixelCoords, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTileButton(pixelCoords, gfx);
+				SpriteCodex::DrawTileCross(pixelCoords, gfx);
+			}
+
+			break;
+
+		default:
+			assert(0 > 1);
+			break;
+		}
 		return;
 	}
 

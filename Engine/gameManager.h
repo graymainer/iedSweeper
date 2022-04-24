@@ -18,7 +18,7 @@ private:
 		};
 		void spawnBomb();
 		bool hasBomb() const;
-		void drawTile(Graphics& gfx, const Vei2& pixelCoords, const bool bFucked) const;
+		void drawTile(Graphics& gfx, const Vei2& pixelCoords, const bool bFucked, const bool bWon) const;
 		void reveal();
 		bool isRevealed() const;
 		bool isFlagged() const;
@@ -47,11 +47,28 @@ private:
 	const tile& lookAt(const Vei2 & pos) const;
 	Vei2 screenToGrid(const Vei2& screenPos);
 	int countNearbyBombs(const Vei2 pos);
+	void stopSoundScape();
+	void startSoundScape();
 
 private:
 
 	static constexpr int fieldWidth = 20;
 	static constexpr int fieldHeight = 16;
 	bool bGameOver = false;
+	bool bGameWon = false;
 	tile field[fieldWidth * fieldHeight];
+	int nTilesToReveal = fieldWidth * fieldHeight;
+
+private:
+
+	Sound boomSnd = { L"Sounds\\boom.wav" };
+	Sound winSnd = { L"Sounds\\win.wav" };
+	Sound beginSnd = { L"Sounds\\begin.wav" };
+
+	//the soundscape
+	Sound ambMus = { L"Sounds\\amb_music.wav", Sound::LoopType::AutoFullSound };
+	Sound ambGun = { L"Sounds\\amb_gunfire.wav", Sound::LoopType::AutoFullSound };
+	Sound ambWind = { L"Sounds\\amb_wind.wav", Sound::LoopType::AutoFullSound };
+
+
 };
