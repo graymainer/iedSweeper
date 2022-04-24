@@ -4,7 +4,7 @@
 
 gameMan::gameMan(Graphics & gfx, int nBombs)
 	:
-	gridOrigin(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2) //is based on center of grid.
+	gridOrigin(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2) //by default, placed at center of screen.
 {
 	assert(nBombs > 0 && nBombs < gridWidth * gridHeight);
 
