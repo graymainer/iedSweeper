@@ -59,8 +59,8 @@ private:
 public:
 
 	//grid stuff
-	static constexpr int gridWidth = 20;
-	static constexpr int gridHeight = 16;
+	static constexpr int gridWidth = 40;
+	static constexpr int gridHeight = 32;
 
 private:
 
