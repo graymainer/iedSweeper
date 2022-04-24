@@ -52,12 +52,13 @@ private:
 
 private:
 
-	static constexpr int fieldWidth = 20;
-	static constexpr int fieldHeight = 16;
+	static constexpr int gridWidth = 20;
+	static constexpr int gridHeight = 16;
+
 	bool bGameOver = false;
 	bool bGameWon = false;
-	tile field[fieldWidth * fieldHeight];
-	int nTilesToReveal = fieldWidth * fieldHeight;
+	tile field[gridWidth * gridHeight];
+	int nTilesToReveal = gridWidth * gridHeight;
 
 private:
 

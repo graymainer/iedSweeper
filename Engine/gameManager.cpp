@@ -4,15 +4,15 @@
 
 gameMan::gameMan(int nBombs)
 {
-	assert(nBombs > 0 && nBombs < fieldWidth * fieldHeight);
+	assert(nBombs > 0 && nBombs < gridWidth * gridHeight);
 
 	nTilesToReveal -= nBombs;
 
 	std::random_device rd;
 	std::mt19937 rng(rd());
 
-	std::uniform_int_distribution<int> xRange(0, fieldWidth - 1);
-	std::uniform_int_distribution<int> yRange(0, fieldHeight - 1);
+	std::uniform_int_distribution<int> xRange(0, gridWidth - 1);
+	std::uniform_int_distribution<int> yRange(0, gridHeight - 1);
 
 	for (int nSpawned = 0; nSpawned < nBombs; nSpawned++)
 	{
@@ -26,9 +26,9 @@ gameMan::gameMan(int nBombs)
 		lookAt(spawnPos).spawnBomb();
 	}
 
-	for (Vei2 gridPos{ 0,0 }; gridPos.y < fieldHeight; gridPos.y++)
+	for (Vei2 gridPos{ 0,0 }; gridPos.y < gridHeight; gridPos.y++)
 	{
-		for (gridPos.x = 0; gridPos.x < fieldWidth; gridPos.x++)
+		for (gridPos.x = 0; gridPos.x < gridWidth; gridPos.x++)
 		{
 			lookAt(gridPos).setNearbyBombCounter(countNearbyBombs(gridPos));
 		}
@@ -43,12 +43,12 @@ gameMan::gameMan(int nBombs)
 
 gameMan::tile & gameMan::lookAt(const Vei2 & pos)
 {
-	return field[pos.y * fieldWidth + pos.x];
+	return field[pos.y * gridWidth + pos.x];
 }
 
 const gameMan::tile & gameMan::lookAt(const Vei2 & pos) const
 {
-	return field[pos.y * fieldWidth + pos.x];
+	return field[pos.y * gridWidth + pos.x];
 }
 
 Vei2 gameMan::screenToGrid(const Vei2 & screenPos)
@@ -61,8 +61,8 @@ int gameMan::countNearbyBombs(const Vei2 pos)
 	const int xStart = std::max(0, pos.x - 1);
 	const int yStart = std::max(0, pos.y - 1);
 
-	const int xEnd = std::min(fieldWidth - 1, pos.x + 1);
-	const int yEnd = std::min(fieldHeight - 1, pos.y + 1);
+	const int xEnd = std::min(gridWidth - 1, pos.x + 1);
+	const int yEnd = std::min(gridHeight - 1, pos.y + 1);
 
 	int bombCount = 0;
 
@@ -97,9 +97,9 @@ void gameMan::draw(Graphics & gfx) const
 {
 	gfx.DrawRect(makeBG(), Color(192, 192, 192));
 
-	for (Vei2 gridPos = { 0, 0 }; gridPos.y < fieldHeight; gridPos.y++)
+	for (Vei2 gridPos = { 0, 0 }; gridPos.y < gridHeight; gridPos.y++)
 	{
-		for (gridPos.x = 0; gridPos.x < fieldWidth; gridPos.x++)
+		for (gridPos.x = 0; gridPos.x < gridWidth; gridPos.x++)
 		{
 			lookAt(gridPos).drawTile(gfx, gridPos * SpriteCodex::tileSize, bGameOver, bGameWon);
 		}
@@ -108,7 +108,7 @@ void gameMan::draw(Graphics & gfx) const
 
 RectI gameMan::makeBG() const
 {
-	return RectI( 0, fieldWidth * SpriteCodex::tileSize, 0, fieldHeight * SpriteCodex::tileSize);
+	return RectI( 0, gridWidth * SpriteCodex::tileSize, 0, gridHeight * SpriteCodex::tileSize);
 }
 
 void gameMan::onRightClick(const Vei2 & clickCoords)
@@ -117,7 +117,7 @@ void gameMan::onRightClick(const Vei2 & clickCoords)
 		return;
 
 	const Vei2 gridPos = screenToGrid(clickCoords);
-	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
+	assert((gridPos.x >= 0 && gridPos.x < gridWidth) && (gridPos.y >= 0 && gridPos.y < gridHeight));
 
 	tile& clickedTile = lookAt(gridPos);
 
@@ -132,7 +132,7 @@ void gameMan::onLeftClick(const Vei2 & clickCoords)
 		return;
 
 	const Vei2 gridPos = screenToGrid(clickCoords);
-	assert((gridPos.x >= 0 && gridPos.x < fieldWidth) && (gridPos.y >= 0 && gridPos.y < fieldHeight));
+	assert((gridPos.x >= 0 && gridPos.x < gridWidth) && (gridPos.y >= 0 && gridPos.y < gridHeight));
 
 	tile& clickedTile = lookAt(gridPos);
 
