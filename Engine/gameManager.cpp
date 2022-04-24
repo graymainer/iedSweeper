@@ -29,7 +29,9 @@ void gameMan::draw(Graphics & gfx) const
 	const int halfWidth = (fieldWidth) / 2;
 	const int halfHeight = (fieldHeight) / 2;
 
-	gfx.DrawRect(makeBG(halfWidth, halfHeight), Color(192, 192, 192));
+	drawBackground(gfx, halfWidth, halfHeight, borderSize, backgroundColor, borderColor);
+
+
 
 	for (Vei2 gridPos = { 0, 0 }; gridPos.y < fieldHeight; gridPos.y++)
 	{
@@ -43,6 +45,17 @@ void gameMan::draw(Graphics & gfx) const
 RectI gameMan::makeBG(const int halfW, const int halfH) const
 {
 	return RectI(gridOrigin.x - (halfW * SpriteCodex::tileSize), gridOrigin.x + (halfW * SpriteCodex::tileSize), gridOrigin.y - (halfH * SpriteCodex::tileSize), gridOrigin.y + (halfH * SpriteCodex::tileSize));
+}
+
+RectI gameMan::makeBorder(const int halfW, const int halfH, const int size) const
+{
+	return RectI((gridOrigin.x - (halfW * SpriteCodex::tileSize)) - size, (gridOrigin.x + (halfW * SpriteCodex::tileSize)) + size, (gridOrigin.y - (halfH * SpriteCodex::tileSize)) - size, (gridOrigin.y + (halfH * SpriteCodex::tileSize)) + size);
+}
+
+void gameMan::drawBackground(Graphics & gfx, const int halfW, const int halfH, const int in_size, const Color bgClr, const Color bdrClr) const
+{
+	gfx.DrawRect(makeBorder(halfW, halfH, in_size), bdrClr);
+	gfx.DrawRect(makeBG(halfW, halfH), bgClr);
 }
 
 void gameMan::tile::drawTile(Graphics & gfx, const Vei2& pixelCoords) const
