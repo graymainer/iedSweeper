@@ -168,6 +168,9 @@ void gameMan::draw(Graphics & gfx) const
 				(gridPos.y * SpriteCodex::tileSize) + (gridOrigin.y - (halfHeight * SpriteCodex::tileSize))), bGameOver, bGameWon);
 		}
 	}
+
+	if (bGameWon)
+		SpriteCodex::DrawWin(Vei2(gfx.ScreenWidth / 2, gfx.ScreenHeight / 2), gfx);
 }
 
 RectI gameMan::makeBG(const int halfW, const int halfH) const
